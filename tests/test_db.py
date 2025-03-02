@@ -145,8 +145,8 @@ def setup_vache(db_conn, setup_ferme):
     cur = db_conn.cursor()
     cur.execute("""
                 INSERT INTO Vache (proprietaire, poids, age, qt_lait, dernier_repas, dernier_breuvage, dernier_lavage)
-                VALUES (?, 2.5, 5, 'F', 1, ?, ?, '2025-02-26') RETURNING idPoule
-            """, (setup_ferme[0], date.today(), date.today() - timedelta(days=1)))
+                VALUES (?, 1, 1, 0, ?, ?, ?) RETURNING idPoule
+            """, (setup_ferme[0], date.today(), date.today(), date.today()))
     vacheId = cur.fetchone()[0]
     db_conn.commit()
     cur.close()
