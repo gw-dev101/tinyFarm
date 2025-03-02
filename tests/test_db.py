@@ -147,6 +147,10 @@ def setup_vache(db_conn, setup_ferme):
                 INSERT INTO Vache (proprietaire, poids, age, qt_lait, dernier_repas, dernier_breuvage, dernier_lavage)
                 VALUES (?, 1, 1, 0, ?, ?, ?)
             """, (setup_ferme[0], date.today(), date.today(), date.today()))
+    cur.execute("""
+                INSERT INTO Vache (proprietaire, poids, age, qt_lait, dernier_repas, dernier_breuvage, dernier_lavage)
+                VALUES (?, 100, 19, 8, ?, ?, ?)
+            """, (setup_ferme[1], date.today(), date.today(), date.today()))
     db_conn.commit()
     cur.close()
 
@@ -159,8 +163,14 @@ def setup_clapier(db_conn, setup_ferme):
                 INSERT INTO Clapier (proprietaire, dernier_repas, dernier_breuvage, dernier_lavage, nb_bebe, nb_petit, nb_gros, nb_adulte_m, nb_adulte_f)
                 VALUES (?, ?, ?, ?, 20, 14, 6, 5, 25)
             """, (setup_ferme[0], date.today(), date.today() - timedelta(days=1),  date.today()))
+    cur.execute("""
+                INSERT INTO Clapier (proprietaire, dernier_repas, dernier_breuvage, dernier_lavage, nb_bebe, nb_petit, nb_gros, nb_adulte_m, nb_adulte_f)
+                VALUES (?, ?, ?, ?, 20, 20, 0, 0, 10)
+            """, (setup_ferme[1], date.today(), date.today() - timedelta(days=1),  date.today()))
     db_conn.commit()
     cur.close()
+
+
 
 
 
