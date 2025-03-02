@@ -145,12 +145,10 @@ def setup_vache(db_conn, setup_ferme):
     cur = db_conn.cursor()
     cur.execute("""
                 INSERT INTO Vache (proprietaire, poids, age, qt_lait, dernier_repas, dernier_breuvage, dernier_lavage)
-                VALUES (?, 1, 1, 0, ?, ?, ?) RETURNING idPoule
+                VALUES (?, 1, 1, 0, ?, ?, ?)
             """, (setup_ferme[0], date.today(), date.today(), date.today()))
-    vacheId = cur.fetchone()[0]
     db_conn.commit()
     cur.close()
-    return vacheId
 
 @pytest.fixture
 def setup_clapier(db_conn, setup_ferme):
@@ -159,12 +157,10 @@ def setup_clapier(db_conn, setup_ferme):
     cur = db_conn.cursor()
     cur.execute("""
                 INSERT INTO Clapier (proprietaire, dernier_repas, dernier_breuvage, dernier_lavage, nb_bebe, nb_petit, nb_gros, nb_adulte_m, nb_adulte_f)
-                VALUES (?, ?, ?, ?, 20, 14, 6, 5, 25) RETURNING idFerme
+                VALUES (?, ?, ?, ?, 20, 14, 6, 5, 25)
             """, (setup_ferme[0], date.today(), date.today() - timedelta(days=1),  date.today()))
-    clapierId = cur.fetchone()[0]
     db_conn.commit()
     cur.close()
-    return clapierId
 
 
 
