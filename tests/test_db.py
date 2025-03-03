@@ -184,3 +184,69 @@ def test_creation_ferme(db_conn, setup_db):
 
     cur.close()
     assert result == ("Test", 1500, None, 12, None)
+""""""""""""""""""""""""""""""""#partie 2
+
+
+def test_creation_produit(db_conn, setup_db):
+    cur = db_conn.cursor()
+    cur.execute("INSERT INTO Produit (nom, description, estVendable) VALUES ('Laine', 'La laine de mouton', 1)")
+    produit_id = cur.lastrowid
+    
+    cur.execute("SELECT nom, description, estVendable FROM Produit WHERE idProduit = ?;", (produit_id,))
+    result = cur.fetchone()
+    
+    cur.close()
+    assert result == ("Laine", "La laine de mouton", 1)#le produit est bien créé
+
+def test_creation_remise(db_conn, setup_db, setup_ferme):
+    """Test de la création d'une remise associée à un produit et une ferme"""
+    cur = db_conn.cursor()
+    
+    # Créer un produit
+    cur.execute("INSERT INTO Produit (nom, description, estVendable) VALUES ('Maïs', 'Maïs biologique', 1)")
+    produit_id = cur.lastrowid
+    
+    # Associer une remise à la ferme
+    cur.execute("INSERT INTO Remise (proprietaire, type, quantite) VALUES (?, ?, 100)", (setup_ferme[0], produit_id))
+    
+    cur.execute("SELECT proprietaire, type, quantite FROM Remise WHERE proprietaire = ?", (setup_ferme[0],))
+    result = cur.fetchone()
+    
+    cur.close()
+    assert result == (setup_ferme[0], produit_id, 100)
+
+
+def test_creation_commerce(db_conn, setup_db, setup_ferme):
+    """Test de la création d'une transaction de commerce entre fermes"""
+    cur = db_conn.cursor()
+    
+    # Créer un produit
+    cur.execute("INSERT INTO Produit (nom, description, estVendable) VALUES ('Blé', 'Blé de qualité supérieure', 1)")
+    produit_id = cur.lastrowid
+
+    # Créer une transaction de commerce
+    cur.execute("INSERT INTO Commerce (idAcheteur, idVendeur, produit, quantite, prixUnitaire, enVenteDepuis) VALUES (?, ?, ?, ?, ?, ?)",
+                (setup_ferme[0], setup_ferme[1], produit_id, 50, 10.5, datetime.now()))
+    
+    cur.execute("SELECT idAcheteur, idVendeur, produit, quantite, prixUnitaire FROM Commerce WHERE idAcheteur = ?", (setup_ferme[0],))
+    result = cur.fetchone()
+    
+    cur.close()
+    assert result == (setup_ferme[0], setup_ferme[1], produit_id, 50, 10.5)
+
+
+def test_creation_classement(db_conn, setup_db, setup_ferme):
+    """Test de l'ajout d'un score dans le classement"""
+    cur = db_conn.cursor()
+    
+    # Ajouter une ferme au classement
+    cur.execute("INSERT INTO Classement (idFerme, score) VALUES (?, 98.5)", (setup_ferme[0],))
+    
+    cur.execute("SELECT idFerme, score FROM Classement WHERE idFerme = ?", (setup_ferme[0],))
+    result = cur.fetchone()
+    
+    cur.close()
+    assert result == (setup_ferme[0], 98.5)
+
+if __name__ == "__main__":
+    pytest.main(['-v', 'test.py'])
